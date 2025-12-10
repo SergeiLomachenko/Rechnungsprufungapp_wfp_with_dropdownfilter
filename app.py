@@ -65,8 +65,8 @@ def index():
         # invoice_file.save(invoice_path)
 
         # For deploying on render
-        CA3 = os.getenv("CA3_URL")
-        RRM = os.getenv("RRM_URL")
+        CA3 = os.getenv("CA3_URL", verify=False)
+        RRM = os.getenv("RRM_URL", verify=False)
 
         # For local deployment, we just read config.json
         if not CA3 or not RRM:
