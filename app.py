@@ -5,7 +5,6 @@ import subprocess
 import sys
 import uuid
 import json
-import httpx
 from flask import Flask, render_template, request, redirect, flash, url_for, send_file
 
 app = Flask(__name__)
