@@ -5,7 +5,7 @@ import subprocess
 import sys
 import uuid
 import json
-import httpx
+# import httpx
 from flask import Flask, render_template, request, redirect, flash, url_for, send_file
 
 app = Flask(__name__)
@@ -79,8 +79,8 @@ def index():
                 RRM = config.get("RRM_URL", "")
         
         # CA3
-        # resp_ca3 = requests.get(CA3, verify=False)
-        resp_ca3 = httpx.get(CA3, timeout=120, follow_redirects=True)
+        resp_ca3 = requests.get(CA3, verify=False)
+        # resp_ca3 = httpx.get(CA3, timeout=120, follow_redirects=True)
         if resp_ca3.status_code == 200:
             data_ca3 = resp_ca3.json()
             df_public_ca3 = pd.json_normalize(data_ca3) 
@@ -92,8 +92,8 @@ def index():
             print("Error while saving CA3 file:", resp_ca3.status_code, resp_ca3.text[:200])
 
         # RRM
-        # resp_rrm = requests.get(RRM, verify=False)
-        resp_rrm = httpx.get(RRM, timeout=120, follow_redirects=True)
+        resp_rrm = requests.get(RRM, verify=False)
+        # resp_rrm = httpx.get(RRM, timeout=120, follow_redirects=True)
         if resp_rrm.status_code == 200:
             data_rrm = resp_rrm.json()
             df_public_rrm = pd.json_normalize(data_rrm) 
