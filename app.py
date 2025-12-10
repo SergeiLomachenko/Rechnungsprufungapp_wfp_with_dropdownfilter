@@ -25,6 +25,11 @@ def reorder_df(df, desired):
             df[col] = ""
     return df[desired]
 
+@app.life("/")
+def index():
+    return "OK"
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
