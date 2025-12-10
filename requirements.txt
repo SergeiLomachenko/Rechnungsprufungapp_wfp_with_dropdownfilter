@@ -1,7 +1,7 @@
 Flask
 requests
 gunicorn
-gevent==1.4
+gevent==24.2.1
 PyMuPDF
 pdfplumber
 xlsxwriter
