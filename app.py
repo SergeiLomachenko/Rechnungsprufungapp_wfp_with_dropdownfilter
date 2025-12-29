@@ -165,7 +165,7 @@ def index():
 
             run_analysis(
                 script_name="pdf5.py",
-                env_updates={"INPUT_EXCEL_PATH": target_excel}
+                env_updates={"INPUT_EXCEL_PATH": target_excel, "BASE_DIR": BASE_DIR}
             )
             result_files = ['Fehlerreport.xlsx']
 
@@ -220,7 +220,7 @@ def index():
 
             run_analysis(
                 script_name="pdf6.py",
-                env_updates={"INPUT_EXCEL_PATH": target_excel}
+                env_updates={"INPUT_EXCEL_PATH": target_excel, "BASE_DIR": BASE_DIR}
             )
             result_files = ['Fehlerreport.xlsx']
 
