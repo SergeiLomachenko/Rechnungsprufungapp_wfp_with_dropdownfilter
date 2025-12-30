@@ -44,9 +44,6 @@ new_df = new_df[new_df['Fahrzeug'].str.strip() != ""]
 #     worksheet.column_dimensions['D'].width = 25 
 # print("Neue Datei erstellt und gespeichert in output.xlsx")
 
-# load config.json
-with open("config.json", "r", encoding="utf-8") as f:
-    config = json.load(f)
 
 url_ausweise_schilder = os.getenv("ca3_ausweise_schilder")
 

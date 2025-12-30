@@ -165,7 +165,10 @@ def index():
 
             run_analysis(
                 script_name="pdf5.py",
-                env_updates={"INPUT_EXCEL_PATH": target_excel, "BASE_DIR": BASE_DIR}
+                env_updates={"INPUT_EXCEL_PATH": target_excel, 
+                "BASE_DIR": BASE_DIR,
+                "ca3_ausweise_schilder": os.getenv("ca3_ausweise_schilder", "")
+                }
             )
             result_files = ['Fehlerreport.xlsx']
 
@@ -220,7 +223,12 @@ def index():
 
             run_analysis(
                 script_name="pdf6.py",
-                env_updates={"INPUT_EXCEL_PATH": target_excel, "BASE_DIR": BASE_DIR}
+                env_updates={ 
+                "INPUT_EXCEL_PATH": target_excel, 
+                "BASE_DIR": BASE_DIR,
+                "ca3_service_leistungen": os.getenv("ca3_service_leistungen", ""), 
+                "rrm_service_leistungen": os.getenv("rrm_service_leistungen", "") 
+                }
             )
             result_files = ['Fehlerreport.xlsx']
 

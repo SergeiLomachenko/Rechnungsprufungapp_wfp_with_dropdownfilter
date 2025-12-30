@@ -42,10 +42,6 @@ new_df = new_df[new_df['Fahrzeug'].str.strip() != ""]
 
 print(new_df.head())
 
-
-with open("config.json", "r", encoding="utf-8") as f:
-    config = json.load(f)
-
 url_service_leistungen = os.getenv("ca3_service_leistungen")
 url_service_leistungen_rrm = os.getenv("rrm_service_leistungen")
 
