@@ -233,7 +233,7 @@ def check_code_logic_20202040(row):
 
 merged_df["20202040vergleich"] = merged_df.apply(check_code_logic_20202040, axis = 1)
 
-def check_code_logic_not90109020(row):
+def check_code_logic_10010(row):
     # check VIN_vergleich
     if row.get("VIN_vergleich") == "OK":
         if row.get("Code") == 8200.0:
@@ -243,7 +243,7 @@ def check_code_logic_not90109020(row):
                 return "NOK"
     return None
 
-merged_df["10010vergleich"] = merged_df.apply(check_code_logic_not90109020, axis = 1)
+merged_df["10010vergleich"] = merged_df.apply(check_code_logic_10010, axis = 1)
 
 def bemerkungen_logic(row):
     # Erst prüfen, ob der VIN-Match fehlt
