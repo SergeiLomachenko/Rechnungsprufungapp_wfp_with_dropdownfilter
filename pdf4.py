@@ -3,6 +3,8 @@ import pdfplumber
 import pandas as pd
 import openpyxl
 from openpyxl.utils import get_column_letter
+import os 
+import json
 
 # PDF-path
 pdf_path = "invoice.pdf"
@@ -315,9 +317,30 @@ with pd.ExcelWriter("file3.xlsx", engine="openpyxl") as writer:
 # und Ausgabe der Ergebnisse in file4.xlsx
 # --------------------------------------------------
 
+# loading envs
+ca3_daten = os.getenv("CA3_URL")
+rrm_daten = os.getenv("RRM_URL")
+
+if not ca3_daten:
+    config_path = os.path.join(os.getcwd(), "config.json")
+    if os.path.exists(config_path):
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = json.load(f)
+        ca3_daten = config.get("CA3_URL", "")
+
+if not rrm_daten:
+    config_path = os.path.join(os.getcwd(), "config.json")
+    if os.path.exists(config_path):
+        with open(config_path, "r", encoding="utf-8") as f:
+            config = json.load(f)
+        rrm_daten = config.get("RRM_URL", "")
+
+df_ca3 = pd.read_json(ca3_daten)
+df_rrm = pd.read_json(rrm_daten)
+
 # 1. Laden der Referenzdaten aus den Excel-Dateien ca3.xlsx und rrm.xlsx
-df_ca3 = pd.read_excel("ca3.xlsx")
-df_rrm = pd.read_excel("rrm.xlsx")
+# df_ca3 = pd.read_excel("ca3.xlsx")
+# df_rrm = pd.read_excel("rrm.xlsx")
 
 # 2. Hilfsfunktion zur Konvertierung von Zahlen (Umwandeln vom deutschen Format in Float)
 def convert_numeric(value):

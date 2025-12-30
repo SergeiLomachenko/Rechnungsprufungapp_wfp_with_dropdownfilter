@@ -89,29 +89,29 @@ def index():
             
             # CA3
             # resp_ca3 = requests.get(CA3, verify=False)
-            resp_ca3 = httpx.get(CA3, timeout=120, follow_redirects=True)
-            if resp_ca3.status_code == 200:
-                data_ca3 = resp_ca3.json()
-                df_public_ca3 = pd.json_normalize(data_ca3) 
-                df_public_ca3 = reorder_df(df_public_ca3, DESIRED_ORDER)
-                ca3_path = os.path.join(BASE_DIR, 'ca3.xlsx')
-                df_public_ca3.to_excel(ca3_path, index=False, engine="openpyxl")
-                print("Excel CA3 erfolgreich gespeichert!")
-            else:
-                print("Error while saving CA3 file:", resp_ca3.status_code, resp_ca3.text[:200])
+            # resp_ca3 = httpx.get(CA3, timeout=120, follow_redirects=True)
+            # if resp_ca3.status_code == 200:
+            #     data_ca3 = resp_ca3.json()
+            #     df_public_ca3 = pd.json_normalize(data_ca3) 
+            #     df_public_ca3 = reorder_df(df_public_ca3, DESIRED_ORDER)
+            #     ca3_path = os.path.join(BASE_DIR, 'ca3.xlsx')
+            #     df_public_ca3.to_excel(ca3_path, index=False, engine="openpyxl")
+            #     print("Excel CA3 erfolgreich gespeichert!")
+            # else:
+            #     print("Error while saving CA3 file:", resp_ca3.status_code, resp_ca3.text[:200])
 
             # RRM
             # resp_rrm = requests.get(RRM, verify=False)
-            resp_rrm = httpx.get(RRM, timeout=120, follow_redirects=True)
-            if resp_rrm.status_code == 200:
-                data_rrm = resp_rrm.json()
-                df_public_rrm = pd.json_normalize(data_rrm) 
-                df_public_rrm = reorder_df(df_public_rrm, DESIRED_ORDER)
-                rrm_path = os.path.join(BASE_DIR, 'rrm.xlsx')
-                df_public_rrm.to_excel(rrm_path, index=False, engine="openpyxl")
-                print("Excel RRM erfolgreich gespeichert!")
-            else:
-                print("Error while saving RRM file:", resp_rrm.status_code, resp_rrm.text[:200])
+            # resp_rrm = httpx.get(RRM, timeout=120, follow_redirects=True)
+            # if resp_rrm.status_code == 200:
+            #     data_rrm = resp_rrm.json()
+            #     df_public_rrm = pd.json_normalize(data_rrm) 
+            #     df_public_rrm = reorder_df(df_public_rrm, DESIRED_ORDER)
+            #     rrm_path = os.path.join(BASE_DIR, 'rrm.xlsx')
+            #     df_public_rrm.to_excel(rrm_path, index=False, engine="openpyxl")
+            #     print("Excel RRM erfolgreich gespeichert!")
+            # else:
+            #     print("Error while saving RRM file:", resp_rrm.status_code, resp_rrm.text[:200])
 
             # We call the analysis function, which will do the pdf4.py script and process the files
             run_analysis(
