@@ -135,6 +135,51 @@ def index():
                 path = os.path.join(BASE_DIR, f)
                 if os.path.exists(path):
                     os.remove(path)
+        
+        
+        elif rechnungstyp == "pdf3":
+            # Rerighting into invoice.pdf, which will be analysed by pdf4.py, saving to BASE_DIR
+            invoice_path = os.path.join(BASE_DIR, 'invoice.xlsx')
+            if os.path.exists(invoice_path):
+                os.remove(invoice_path)
+            os.replace(temp_path, invoice_path)
+
+            # Checking: output of size and time of modification
+            statinfo = os.stat(invoice_path)
+            print("Invoice gespeichert:", invoice_path,
+                  "Größe:", statinfo.st_size, "Bytes",
+                  "mtime:", statinfo.st_mtime)
+            print("Invoice gespeichert:", invoice_path, os.path.getsize(invoice_path))
+
+            # For deploying on render
+            CA3 = os.getenv("CA3_URL_Excel")
+            RRM = os.getenv("RRM_URL_Excel")
+
+            # For local deployment, we just read config.json
+            if not CA3 or not RRM:
+                config_path = os.path.join(BASE_DIR, "config.json")
+                if os.path.exists(config_path):
+                    with open(config_path) as f:
+                        config = json.load(f)
+                    CA3 = config.get("CA3_URL_Excel", "")
+                    RRM = config.get("RRM_URL_Excel", "")
+            
+            run_analysis(
+                script_name="pdf3.py",
+                rename_map={
+                    'file4.xlsx': 'Fehlerreport.xlsx'
+                }
+            )
+            result_files = [
+                'Fehlerreport.xlsx'
+            ]
+            
+            # We delete the files, as we don not need them anymore 
+            for f in ['invoice.xlsx', 'ca3.xlsx', 'rrm.xlsx']:
+                path = os.path.join(BASE_DIR, f)
+                if os.path.exists(path):
+                    os.remove(path)
+
         elif rechnungstyp == "pdf5":
             # Schild und Ausweise Excel flow
             target_excel = os.path.join(BASE_DIR, 'Ausweise_Schilder.xlsx')
