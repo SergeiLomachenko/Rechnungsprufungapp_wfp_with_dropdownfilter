@@ -514,7 +514,7 @@ tv50_count = ((temp['Nebenkosten'] == 'Terminzuschlag')
               & 
               (temp['Total'].isin([50.0]))).sum()
 
-tv19_count = ((temp['Nebenkosten'] == 'Terminzuschlag') 
+tv19_count = ((temp['Nebenkosten'].str.contains('termin', case=False, na=False) ) 
               & 
               (temp['Total'].isin([10.25, 19.0]))).sum()
 
