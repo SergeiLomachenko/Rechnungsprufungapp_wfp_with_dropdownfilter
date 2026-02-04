@@ -554,7 +554,7 @@ new_columns = [
     'Terminzuschlag', 'EÜbernahme', 'Leerfahrt', 'Seilwindeintransport'
 ]
 for col in new_columns:
-    step_4_nebenkosten[col] = np.nan
+    step_4_nebenkosten[col] = None
 
 step_4_nebenkosten['Weiterverrechnet'] = ''
 
