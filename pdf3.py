@@ -820,15 +820,14 @@ with pd.ExcelWriter("file4.xlsx", engine="openpyxl") as writer:
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
     
     # writing Step4 sheet PW, SUV, LNF zählen
-    df_8.to_excel(writer, sheet_name="Step_4_PW_SUV_LNF", index=False)
-    worksheet = writer.sheets["Step_4_PW_SUV_LNF"]
-    worksheet = writer.sheets["Step_4_PW_SUV_LNF"] 
+    df_8.to_excel(writer, sheet_name="Step_5_PW_SUV_LNF", index=False)
+    worksheet = writer.sheets["Step_5_PW_SUV_LNF"]
     for col_num in range(1, len(df_8.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
 
     # writing Step5 sheet Nebenkosten validieren mit WFP aus CA£ oder RRM
-    step_4_nebenkosten.to_excel(writer, sheet_name="Step_5_Weiteverrechnet", index=False)
-    worksheet = writer.sheets["Step_5_Weiteverrechnet"]
+    step_4_nebenkosten.to_excel(writer, sheet_name="Step_4_Weiteverrechnet", index=False)
+    worksheet = writer.sheets["Step_4_Weiteverrechnet"]
     for col_num in range(1, len(step_4_nebenkosten.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
     
