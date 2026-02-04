@@ -602,9 +602,10 @@ for idx, row in step_4_nebenkosten.iterrows():
     
     weiterverrechnet = 'Nein, bitte manuell prüfen'
     
-    # Condition 1: Terminzuschlag
-    if nebkosten == 'Terminzuschlag':
-        if pd.notna(total_rounded) and pd.notna(ref_row.get('Terminzuschlag') if ref_row is not None else None):
+    # Condition 1: Terminzuschlag (регистронезависимо)
+    if pd.notna(nebkosten) and 'termin' in str(nebkosten).lower():
+        termin_val = ref_row.get('Terminzuschlag') if ref_row is not None else None
+        if pd.notna(total_rounded) and pd.notna(termin_val):
             weiterverrechnet = 'Ja'
     
     # Condition 2: Seilwinde-Zuschlag
