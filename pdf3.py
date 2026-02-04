@@ -819,18 +819,18 @@ with pd.ExcelWriter("file4.xlsx", engine="openpyxl") as writer:
     for col_num in range(1, len(summary_nebenkosten.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
     
-    # writing Step4 sheet PW, SUV, LNF zählen
-    df_8.to_excel(writer, sheet_name="Step_5_PW_SUV_LNF", index=False)
-    worksheet = writer.sheets["Step_5_PW_SUV_LNF"]
-    for col_num in range(1, len(df_8.columns) + 1):
-        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
-
-    # writing Step5 sheet Nebenkosten validieren mit WFP aus CA£ oder RRM
+    # writing Step4 sheet Nebenkosten validieren mit WFP aus CA£ oder RRM
     step_4_nebenkosten.to_excel(writer, sheet_name="Step_4_Weiteverrechnet", index=False)
     worksheet = writer.sheets["Step_4_Weiteverrechnet"]
     for col_num in range(1, len(step_4_nebenkosten.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
-    
+
+    # writing Step5 sheet PW, SUV, LNF zählen
+    df_8.to_excel(writer, sheet_name="Step_5_PW_SUV_LNF", index=False)
+    worksheet = writer.sheets["Step_5_PW_SUV_LNF"]
+    for col_num in range(1, len(df_8.columns) + 1):
+        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
+   
     # writing Step6 sheet doppelte Werte ausfindig zu machen 
     df_duplicates.to_excel(writer, sheet_name="Step_6_Dublikate", index=False)
     worksheet = writer.sheets["Step_6_Dublikate"]
