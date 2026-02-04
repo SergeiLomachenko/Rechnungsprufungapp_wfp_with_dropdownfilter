@@ -180,9 +180,9 @@ for idx, row in new_df.iterrows():
     # Auswahl der Referenzdatei anhand der Länge der InvoiceNr:
     # - 5-stellige InvoiceNr → rrm.xlsx
     # - 6-stellige InvoiceNr → ca3.xlsx
-    if len(Invoiceshort) == 5:
+    if len(Invoiceshort) <= 5:
         df_reference = df_rrm
-    elif len(Invoiceshort) == 6:
+    elif len(Invoiceshort) >= 6:
         df_reference = df_ca3
     else:
         df_reference = None
@@ -566,10 +566,10 @@ for idx, row in step_4_nebenkosten.iterrows():
         Invoiceshort = str(row["Invoiceshort"]).strip()
     
     # chosing ca3 or rrm
-    if len(Invoiceshort) == 5:
-        df_reference = db_rrm
-    elif len(Invoiceshort) == 6:
-        df_reference = db_ca3
+    if len(Invoiceshort) <= 5:
+        df_reference = df_rrm
+    elif len(Invoiceshort) >= 6:
+        df_reference = df_ca3
     else:
         df_reference = None
     
