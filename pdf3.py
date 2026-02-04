@@ -10,7 +10,8 @@ import numpy as np
 # PDF-path
 excel_path = "invoice.xlsx"
 
-df = pd.read_excel("invoice.xlsx", skiprows=5)
+df = pd.read_excel("invoice.xlsx", skiprows=5) 
+df_5 = df.copy()
 
 df_temp = df.replace(r'^\s*$', pd.NA, regex=True)
 empty_rows = df_temp.isna().all(axis=1) 
@@ -511,7 +512,11 @@ temp['Total'] = temp['Total'].round(2)
 # counting alle Nebencosten 
 tv50_count = ((temp['Nebenkosten'] == 'Terminzuschlag') 
               & 
-              (temp['Total'].isin([50.0, 10.25, 19.0]))).sum()
+              (temp['Total'].isin([50.0]))).sum()
+
+tv19_count = ((temp['Nebenkosten'] == 'Terminzuschlag') 
+              & 
+              (temp['Total'].isin([10.25, 19.0]))).sum()
 
 tv100_count = ((temp['Nebenkosten'] == 'Terminzuschlag') & 
                (temp['Total'].isin([100.0, 55.0]))).sum()
@@ -526,8 +531,8 @@ eubername_count = (temp['Total'] == 12.70).sum()
 
 # creating new DataFrame for Step 3 summary
 summary_nebenkosten = pd.DataFrame({
-    'Kategorie': ['TV50', 'TV100', 'Leerfahrt', 'Seilwinde', 'eÜbernahme'],
-    'Anzahl': [tv50_count, tv100_count, leerfahrt_count, seilwinde_count, eubername_count]
+    'Kategorie': ['TV50', 'TV19', 'TV100', 'Leerfahrt', 'Seilwinde', 'eÜbernahme'],
+    'Anzahl': [tv50_count, tv19_count, tv100_count, leerfahrt_count, seilwinde_count, eubername_count]
 })
 
 # Step 4: checking alle Nebenkosten mit der Info aus der DB
@@ -545,7 +550,7 @@ step_4_nebenkosten = step2_df_only_nebenkocten[[
 
 # new columns (from the DB)
 new_columns = [
-    'Transport_WFP', 'WFP_Transportpreis (9010, 2010, 9020)', 'Telavis', 'Transportcost', 'Seilwinde', 
+    'Transport_WFP', 'WFP_Transportpreis (9010, 2010, 9020)', 'Transportcost', 'Telavis', 'Seilwinde', 
     'Terminzuschlag', 'EÜbernahme', 'Leerfahrt', 'Seilwindeintransport'
 ]
 for col in new_columns:
@@ -625,6 +630,113 @@ for idx, row in step_4_nebenkosten.iterrows():
 # Statistik for checking
 print("Statistik Weiterverrechnet:")
 print(f"\nRows processed: {len(step_4_nebenkosten)}")
+
+# STEP 5: Doppelte Werte
+df_5 = df_5.loc[:, ~df_5.columns.str.startswith('Unnamed')]
+df6 = df_5.loc[:, ~df_5.columns.str.startswith('Unnamed')]
+if 'Fahrgestellnummer' in df_5.columns and 'Faktor' in df_5.columns:
+    df_clean = df_5[df_5['Fahrgestellnummer'].notna() & df_5['Faktor'].notna()]
+    duplicates_mask = df_clean.duplicated(subset=['Fahrgestellnummer', 'Faktor'], keep=False)
+    
+    if duplicates_mask.any():
+        df_duplicates = df_clean[duplicates_mask].copy()
+        print(f"Gefunden: {len(df_duplicates)} Doppeleinträge")
+    else:
+        df_duplicates = pd.DataFrame({'Meldung': ['Keine Doppeleinträge gefunden']})
+        print("Keine Doppeleinträge gefunden")
+else:
+    df_duplicates = pd.DataFrame({
+        'Meldung': ['Fehler: Spalten "Fahrgestellnummer" oder "Faktor" nicht vorhanden'],
+        'Vorhandene_Spalten': [', '.join(df_5.columns.tolist())]
+    })
+    print("Fehler: Benötigte Spalten nicht gefunden")
+
+if 'Meldung' in df_duplicates.columns:
+    print("\nErgebnis:")
+    print(df_duplicates.to_string(index=False))
+else:
+    display_cols = ['Fahrgestellnummer', 'Faktor']
+    for col in ['Invoiceshort', 'InvoiceNr', 'Total', 'Auftraggeber']:
+        if col in df_duplicates.columns:
+            display_cols.append(col)
+            break 
+    
+    print("\nGefundene Doppeleinträge:")
+    print(df_duplicates[display_cols].head(20).to_string(index=False))
+
+# STEP 6: Total überprüfen
+total_row = df6[df6['Faktor'].astype(str).str.contains('Total', case=False, na=False)]
+
+if len(total_row) > 0:
+    row = total_row.iloc[0]
+    
+    invoice_value = row.get('Faktor', row.get('Faktor', 'N/A'))
+    betrag_str = row.get('Betrag', '0')
+    
+    try:
+        if isinstance(betrag_str, str):
+            total_invoice_value = float(betrag_str.replace(',', '.'))
+        else:
+            total_invoice_value = float(betrag_str) 
+    except (ValueError, TypeError):
+        total_invoice_value = 0.0
+
+    kalk_sum = new_df['Total'].sum()
+    
+    df_6 = pd.DataFrame({
+        'Invoice': [invoice_value],
+        'Total_invoice': [total_invoice_value],
+        'Kalkulatorische_Betragssumme': [kalk_sum]
+    })
+    
+    total_rounded = round(df_6['Total_invoice'].iloc[0], 2)
+    kalk_rounded = round(df_6['Kalkulatorische_Betragssumme'].iloc[0], 2)
+    
+    df_6['Stimmt der Gesamtbetrag'] = 'Ja' if abs(total_rounded - kalk_rounded) < 0.01 else 'Nein'
+    
+    print(f"Total aus Rechnung: {total_rounded:.2f}")
+    print(f"Kalkuliert: {kalk_rounded:.2f}")
+    print(f"Vergleich: {df_6['Stimmt der Gesamtbetrag'].iloc[0]}")
+else:
+    df_6 = pd.DataFrame({
+        'Invoice': ['N/A'],
+        'Total_invoice': [0],
+        'Kalkulatorische_Betragssumme': [new_df['Total'].sum()],
+        'Stimmt der Gesamtbetrag': ['Fehler: "Total"-Zeile nicht gefunden']
+    })
+    print("Warnung: Keine Zeile mit 'Total' im Faktor gefunden")
+
+# STEP 7: Komische Transporte
+if 'Absender' in new_df.columns and 'Empfaenger' in new_df.columns:
+    mask_absender = new_df['Absender'].notna() & new_df['Absender'].astype(str).str.contains('Gallik', case=False, na=False)
+    mask_empfaenger = new_df['Empfaenger'].notna() & new_df['Empfaenger'].astype(str).str.contains('Gallik', case=False, na=False)
+    mask = mask_absender & mask_empfaenger
+    
+    if mask.any():
+        df_7 = new_df[mask].copy()
+    else:
+        df_7 = pd.DataFrame({'Meldung': ['Keine "komische" Transporte gefunden']})
+else:
+    df_7 = pd.DataFrame({
+        'Meldung': ['Fehler: Spalten "Absender" oder "Empfaenger" nicht vorhanden'],
+        'Vorhandene_Spalten': [', '.join(new_df.columns.tolist())]
+    })
+
+# STEP 8: Wieviele PW, SUV und LNF gab es
+pw_count = len(new_df[new_df['Faktor'] == 1.0])
+suv_count = len(new_df[new_df['Faktor'] == 1.5])
+lnf_count = len(new_df[new_df['Faktor'].isin([2.0, 2.5])])
+total_count = pw_count + suv_count + lnf_count
+
+df_8 = pd.DataFrame({
+    'PW': [pw_count],
+    'SUV': [suv_count],
+    'LNF': [lnf_count],
+    'Total': [total_count]
+})
+
+step1_total = step1_df['CA3'].iloc[0] + step1_df['RRM'].iloc[0] + step1_df['Fehler'].iloc[0]
+df_8['Check'] = 'OK' if df_8['Total'].iloc[0] == step1_total else 'NOK'
 
 # opening excel file
 with pd.ExcelWriter("file4.xlsx", engine="openpyxl") as writer:
@@ -712,5 +824,28 @@ with pd.ExcelWriter("file4.xlsx", engine="openpyxl") as writer:
     worksheet = writer.sheets["Step_4"]
     for col_num in range(1, len(step_4_nebenkosten.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
-
-
+    
+    # writing Step5 sheet doppelte Werte ausfindig zu machen 
+    df_duplicates.to_excel(writer, sheet_name="Step_5_Dublikate", index=False)
+    worksheet = writer.sheets["Step_5_Dublikate"]
+    for col_num in range(1, len(df_duplicates.columns) + 1):
+        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
+    
+    # writing Step6 sheet Gesamtbetrag überprüfen
+    df_6.to_excel(writer, sheet_name="Step_6_Gesamtbetrag", index=False)
+    worksheet = writer.sheets["Step_6_Gesamtbetrag"]
+    for col_num in range(1, len(df_6.columns) + 1):
+        worksheet.column_dimensions[get_column_letter(col_num)].width = 35
+    
+    # writing Step7 sheet Komische Transporte
+    df_7.to_excel(writer, sheet_name="Step_7_Komische_Transporte", index=False)
+    worksheet = writer.sheets["Step_7_Komische_Transporte"] 
+    for col_num in range(1, len(df_7.columns) + 1):
+        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
+    
+    # writing Step8 sheet PW, SUV, LNF zählen
+    df_8.to_excel(writer, sheet_name="Step_8_PW_SUV_LNF", index=False)
+    worksheet = writer.sheets["Step_8_PW_SUV_LNF"]
+    worksheet = writer.sheets["Step_8_PW_SUV_LNF"] 
+    for col_num in range(1, len(df_8.columns) + 1):
+        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
