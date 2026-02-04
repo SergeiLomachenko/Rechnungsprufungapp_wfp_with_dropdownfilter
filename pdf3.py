@@ -567,9 +567,9 @@ for idx, row in step_4_nebenkosten.iterrows():
     
     # chosing ca3 or rrm
     if len(Invoiceshort) <= 5:
-        df_reference = df_rrm
+        df_reference = db_rrm
     elif len(Invoiceshort) >= 6:
-        df_reference = df_ca3
+        df_reference = db_ca3
     else:
         df_reference = None
     
