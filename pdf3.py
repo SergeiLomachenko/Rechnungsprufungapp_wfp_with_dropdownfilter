@@ -742,28 +742,28 @@ df_8['Check'] = 'OK' if df_8['Total'].iloc[0] == step1_total else 'NOK'
 with pd.ExcelWriter("file4.xlsx", engine="openpyxl") as writer:
     
     # writing Fehlerreport sheet
-    new_df.to_excel(writer, sheet_name="Fehlerreport", index=False)
-    worksheet = writer.sheets["Fehlerreport"]
-    for col_num in range(1, len(new_df.columns) + 1):
-        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
+    # new_df.to_excel(writer, sheet_name="Fehlerreport", index=False)
+    # worksheet = writer.sheets["Fehlerreport"]
+    # for col_num in range(1, len(new_df.columns) + 1):
+    #     worksheet.column_dimensions[get_column_letter(col_num)].width = 25
 
     # writing CA3 sheet
-    df_ca3.to_excel(writer, sheet_name="CA3", index=False)
-    worksheet = writer.sheets["CA3"]
-    for col_num in range(1, len(df_ca3.columns) + 1):
-        worksheet.column_dimensions[get_column_letter(col_num)].width = 15
+    # df_ca3.to_excel(writer, sheet_name="CA3", index=False)
+    # worksheet = writer.sheets["CA3"]
+    # for col_num in range(1, len(df_ca3.columns) + 1):
+    #     worksheet.column_dimensions[get_column_letter(col_num)].width = 15
 
     # writing RRM sheet
-    df_rrm.to_excel(writer, sheet_name="RRM", index=False)
-    worksheet = writer.sheets["RRM"]
-    for col_num in range(1, len(df_rrm.columns) + 1):
-        worksheet.column_dimensions[get_column_letter(col_num)].width = 15
+    # df_rrm.to_excel(writer, sheet_name="RRM", index=False)
+    # worksheet = writer.sheets["RRM"]
+    # for col_num in range(1, len(df_rrm.columns) + 1):
+    #     worksheet.column_dimensions[get_column_letter(col_num)].width = 15
     
     # writing Vergleich sheet
-    df_vergleich.to_excel(writer, sheet_name="Vergleich", index=False)
-    worksheet = writer.sheets["Vergleich"]
-    for col_num in range(1, len(df_vergleich.columns) + 1):
-        worksheet.column_dimensions[get_column_letter(col_num)].width = 15
+    # df_vergleich.to_excel(writer, sheet_name="Vergleich", index=False)
+    # worksheet = writer.sheets["Vergleich"]
+    # for col_num in range(1, len(df_vergleich.columns) + 1):
+    #     worksheet.column_dimensions[get_column_letter(col_num)].width = 15
     
     # writing Step1 sheet (number CA3, RRM, Fehler)
     step1_df.to_excel(writer, sheet_name="Step_1 Anzahl TA", index=False)
@@ -802,50 +802,52 @@ with pd.ExcelWriter("file4.xlsx", engine="openpyxl") as writer:
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
 
     # writing Step2 sheet TA
-    step2_df_only_TA.to_excel(writer, sheet_name="Step_2_1_TA_Beträge", index=False)
-    worksheet = writer.sheets["Step_2_1_TA_Beträge"]
-    for col_num in range(1, len(step2_df_only_TA.columns) + 1):
-        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
+    # step2_df_only_TA.to_excel(writer, sheet_name="Step_2_1_TA_Beträge", index=False)
+    # worksheet = writer.sheets["Step_2_1_TA_Beträge"]
+    # for col_num in range(1, len(step2_df_only_TA.columns) + 1):
+    #     worksheet.column_dimensions[get_column_letter(col_num)].width = 25
     
     # writing Step2 sheet Nebenkosten
-    step2_df_only_nebenkocten.to_excel(writer, sheet_name="Step_2_2_Nebenkosten", index=False)
-    worksheet = writer.sheets["Step_2_2_Nebenkosten"]
-    for col_num in range(1, len(step2_df_only_nebenkocten.columns) + 1):
-        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
+    # step2_df_only_nebenkocten.to_excel(writer, sheet_name="Step_2_2_Nebenkosten", index=False)
+    # worksheet = writer.sheets["Step_2_2_Nebenkosten"]
+    # for col_num in range(1, len(step2_df_only_nebenkocten.columns) + 1):
+    #     worksheet.column_dimensions[get_column_letter(col_num)].width = 25
     
     # writing Step3 sheet Nebenkosten counting
-    summary_nebenkosten.to_excel(writer, sheet_name="Step_3", index=False)
-    worksheet = writer.sheets["Step_3"]
+    summary_nebenkosten.to_excel(writer, sheet_name="Step_3_Nebenkosten", index=False)
+    worksheet = writer.sheets["Step_3_Nebenkosten"]
     for col_num in range(1, len(summary_nebenkosten.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
+    
+    # writing Step4 sheet PW, SUV, LNF zählen
+    df_8.to_excel(writer, sheet_name="Step_4_PW_SUV_LNF", index=False)
+    worksheet = writer.sheets["Step_4_PW_SUV_LNF"]
+    worksheet = writer.sheets["Step_4_PW_SUV_LNF"] 
+    for col_num in range(1, len(df_8.columns) + 1):
+        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
 
-    # writing Step4 sheet Nebenkosten validieren mit WFP aus CA£ oder RRM
-    step_4_nebenkosten.to_excel(writer, sheet_name="Step_4", index=False)
-    worksheet = writer.sheets["Step_4"]
+    # writing Step5 sheet Nebenkosten validieren mit WFP aus CA£ oder RRM
+    step_4_nebenkosten.to_excel(writer, sheet_name="Step_5_Weiteverrechnet", index=False)
+    worksheet = writer.sheets["Step_5_Weiteverrechnet"]
     for col_num in range(1, len(step_4_nebenkosten.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
     
-    # writing Step5 sheet doppelte Werte ausfindig zu machen 
-    df_duplicates.to_excel(writer, sheet_name="Step_5_Dublikate", index=False)
-    worksheet = writer.sheets["Step_5_Dublikate"]
+    # writing Step6 sheet doppelte Werte ausfindig zu machen 
+    df_duplicates.to_excel(writer, sheet_name="Step_6_Dublikate", index=False)
+    worksheet = writer.sheets["Step_6_Dublikate"]
     for col_num in range(1, len(df_duplicates.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
     
-    # writing Step6 sheet Gesamtbetrag überprüfen
-    df_6.to_excel(writer, sheet_name="Step_6_Gesamtbetrag", index=False)
-    worksheet = writer.sheets["Step_6_Gesamtbetrag"]
+    # writing Step7 sheet Gesamtbetrag überprüfen
+    df_6.to_excel(writer, sheet_name="Step_7_Gesamtbetrag", index=False)
+    worksheet = writer.sheets["Step_7_Gesamtbetrag"]
     for col_num in range(1, len(df_6.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 35
     
-    # writing Step7 sheet Komische Transporte
-    df_7.to_excel(writer, sheet_name="Step_7_Komische_Transporte", index=False)
-    worksheet = writer.sheets["Step_7_Komische_Transporte"] 
+    # writing Step8 sheet Komische Transporte
+    df_7.to_excel(writer, sheet_name="Step_8_Komische_Transporte", index=False)
+    worksheet = writer.sheets["Step_8_Komische_Transporte"] 
     for col_num in range(1, len(df_7.columns) + 1):
         worksheet.column_dimensions[get_column_letter(col_num)].width = 25
     
-    # writing Step8 sheet PW, SUV, LNF zählen
-    df_8.to_excel(writer, sheet_name="Step_8_PW_SUV_LNF", index=False)
-    worksheet = writer.sheets["Step_8_PW_SUV_LNF"]
-    worksheet = writer.sheets["Step_8_PW_SUV_LNF"] 
-    for col_num in range(1, len(df_8.columns) + 1):
-        worksheet.column_dimensions[get_column_letter(col_num)].width = 25
+    
