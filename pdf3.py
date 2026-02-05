@@ -393,11 +393,18 @@ rrm_count = df_vergleich[
     (df_vergleich["AuftraggeberVergleich"] == "OK")
 ].shape[0]
 
+# fehler_count = df_vergleich[
+#     (df_vergleich["Auftraggeber"] == "Fehler") &
+#     (df_vergleich["Faktor"] != 0) &
+#     (df_vergleich["AuftraggeberVergleich"] == "NOK")
+# ].shape[0]
+
 fehler_count = df_vergleich[
-    (df_vergleich["Auftraggeber"] == "Fehler") &
-    (df_vergleich["Faktor"] != 0) &
-    (df_vergleich["AuftraggeberVergleich"] == "NOK")
+    ((df_vergleich["Auftraggeber"] == "Fehler") & (df_vergleich["Faktor"] != 0)) & (df_vergleich["AuftraggeberVergleich"] == "NOK") |
+    ((df_vergleich["Auftraggeber"] == "CA3") & (df_vergleich["Faktor"] != 0) & (df_vergleich["AuftraggeberVergleich"] == "NOK")) |
+    ((df_vergleich["Auftraggeber"] == "RRM") & (df_vergleich["Faktor"] != 0) & (df_vergleich["AuftraggeberVergleich"] == "NOK"))
 ].shape[0]
+
 
 # creating new dataFrame for step_1
 step1_df = pd.DataFrame({
