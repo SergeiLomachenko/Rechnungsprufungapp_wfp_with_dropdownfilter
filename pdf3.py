@@ -424,11 +424,16 @@ df_rrm = df_vergleich_cleen[
 ]
 
 df_fehler = df_vergleich_cleen[
-    (df_vergleich_cleen["Auftraggeber"] == "Fehler") &
-    (df_vergleich_cleen["Faktor"] != 0) 
-    # &
-    # (df_vergleich_cleen["AuftraggeberVergleich"] == "NOK")
+    ((df_vergleich_cleen["Auftraggeber"] == "Fehler") & (df_vergleich_cleen["Faktor"] != 0)) & (df_vergleich_cleen["AuftraggeberVergleich"] == "NOK") |
+    ((df_vergleich_cleen["Auftraggeber"] == "CA3") & (df_vergleich_cleen["Faktor"] != 0) & (df_vergleich_cleen["AuftraggeberVergleich"] == "NOK")) |
+    ((df_vergleich_cleen["Auftraggeber"] == "RRM") & (df_vergleich_cleen["Faktor"] != 0) & (df_vergleich_cleen["AuftraggeberVergleich"] == "NOK"))
 ]
+
+# df_fehler = df_vergleich_cleen[
+#     (df_vergleich_cleen["Auftraggeber"] == "Fehler") &
+#     (df_vergleich_cleen["Faktor"] != 0) 
+
+# ]
 
 # creating new dataFrame for step_1_1
 step_1_1_df = df_fehler
