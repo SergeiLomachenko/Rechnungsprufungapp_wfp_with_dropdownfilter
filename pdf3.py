@@ -468,7 +468,11 @@ df_zusatz = df_vergleich[
 def check_total_amounts(df):
     # list of okey Beträgen
     valid_totals = [126, 156.8, 189, 207.75, 235.20, 294.35, 
-                    311.65, 311.6, 313.60, 378, 392, 415.5]
+                    311.65, 311.6, 313.60, 378, 392, 415.5, 
+                    127.25, 158.35, 190.90, 209.85, 237.55, 
+                    314.80, 395.90, 419.70, 297.30, 381.80, 
+                    385.95, 390.70, 416.95]
+                    # Zeile oben ist dür die Motorräder
     
     # round to 2 decimals and check if in the valid_totals
     df['Betrag okey'] = df['Total'].round(2).isin([round(v, 2) for v in valid_totals]).map({True: 'OK', False: 'NOK'})
