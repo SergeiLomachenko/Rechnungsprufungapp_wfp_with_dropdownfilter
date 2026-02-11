@@ -473,12 +473,14 @@ def check_total_amounts(df):
                     314.80, 314.75, 395.90, 395.85, 419.70, 297.30, 381.80, 
                     385.95, 390.70, 416.95]
                     #Zeile oben ist dür die Motorräder
-    df['Total'] = pd.to_numeric(df['Total'], errors='coerce')
-    df['Total_rounded'] = df['Total'].round(2)
-    # round to 2 decimals and check if in the valid_totals
-    # df['Betrag okey'] = df['Total'].round(2).isin([round(v, 2) for v in valid_totals]).map({True: 'OK', False: 'NOK'})
-    df['Betrag okey'] = df['Total_rounded'].isin(valid_totals).map({True: 'OK', False: 'NOK'})
     
+    # df['Total'] = pd.to_numeric(df['Total'], errors='coerce')
+    # df['Total_rounded'] = df['Total'].round(2)
+    # df['Betrag okey'] = df['Total_rounded'].isin(valid_totals).map({True: 'OK', False: 'NOK'})
+
+    # round to 2 decimals and check if in the valid_totals
+    df['Betrag okey'] = df['Total'].round(2).isin([round(v, 2) for v in valid_totals]).map({True: 'OK', False: 'NOK'})
+
     return df
 
 # applying the function
