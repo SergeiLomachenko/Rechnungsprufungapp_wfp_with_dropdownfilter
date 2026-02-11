@@ -469,8 +469,8 @@ def check_total_amounts(df):
     # list of okey Beträgen
     valid_totals = [126, 156.8, 189, 207.75, 235.20, 294.35, 
                     311.65, 311.6, 313.60, 378, 392, 415.5, 
-                    127.25, 158.35, 190.90, 209.85, 237.55, 237.5,
-                    314.80, 395.90, 419.70, 297.30, 381.80, 
+                    127.25, 158.35, 190.90, 190.85, 209.85, 237.55, 237.5,
+                    314.80, 314.75, 395.90, 395.85, 419.70, 297.30, 381.80, 
                     385.95, 390.70, 416.95]
                     #Zeile oben ist dür die Motorräder
     df['Total'] = pd.to_numeric(df['Total'], errors='coerce')
@@ -496,7 +496,7 @@ def check_nebenkosten(df):
         df['InvoiceNr'].notna() & 
         df['InvoiceNr'].str.contains('Leerfahrt', case=False, na=False)
     )
-    df.loc[mask_leerfahrt & (total_rounded == 105.0), 'Betrag okey'] = 'OK'
+    df.loc[mask_leerfahrt & total_rounded.isin([105.0, 52.5]), 'Betrag okey'] = 'OK'
     
     # Condition Nebenkosten = 'Terminzuschlag'
     mask_termin = df['Nebenkosten'] == 'Terminzuschlag'
