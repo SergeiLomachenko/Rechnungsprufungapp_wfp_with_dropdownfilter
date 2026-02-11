@@ -467,31 +467,19 @@ df_zusatz = df_vergleich[
 # STEP 2: Überprüfung von Beträgen, Suche nach nicht gerechtfertigten und falschen
 def check_total_amounts(df):
     # list of okey Beträgen
-    valid_totals = {
-        f"{v:.2f}" for v in [
-            126, 156.8, 189, 207.75, 235.20, 294.35,
-            311.65, 311.6, 313.60, 378, 392, 415.5,
-            127.25, 158.35, 190.90, 209.85, 237.55, 237.5,
-            314.80, 395.90, 419.70, 297.30, 381.80,
-            385.95, 390.70, 416.95
-        ]
-    }
-    # valid_totals = [126, 156.8, 189, 207.75, 235.20, 294.35, 
-    #                 311.65, 311.6, 313.60, 378, 392, 415.5, 
-    #                 127.25, 158.35, 190.90, 209.85, 237.55, 237.5,
-    #                 314.80, 395.90, 419.70, 297.30, 381.80, 
-    #                 385.95, 390.70, 416.95]
-                    # Zeile oben ist dür die Motorräder
-    
-    total_str = df['Total'].map(lambda x: f"{x:.2f}")
-
-    df['Betrag okey'] = total_str.isin(valid_totals).map({True: 'OK', False: 'NOK'})
-    return df
-
+    valid_totals = [126, 156.8, 189, 207.75, 235.20, 294.35, 
+                    311.65, 311.6, 313.60, 378, 392, 415.5, 
+                    127.25, 158.35, 190.90, 209.85, 237.55, 237.5,
+                    314.80, 395.90, 419.70, 297.30, 381.80, 
+                    385.95, 390.70, 416.95]
+                    #Zeile oben ist dür die Motorräder
+    df['Total'] = pd.to_numeric(df['Total'], errors='coerce')
+    df['Total_rounded'] = df['Total'].round(2)
     # round to 2 decimals and check if in the valid_totals
     # df['Betrag okey'] = df['Total'].round(2).isin([round(v, 2) for v in valid_totals]).map({True: 'OK', False: 'NOK'})
+    df['Betrag okey'] = df['Total_rounded'].isin(valid_totals).map({True: 'OK', False: 'NOK'})
     
-    # return df
+    return df
 
 # applying the function
 step2_df_only_TA = check_total_amounts(new_df[new_df["Faktor"] != 0].copy())
