@@ -6,7 +6,7 @@ import os
 import json
 import re
 
-# ── Input ─────────────────────────────────────────────────────────────────────
+# Input
 df_raw = pd.read_excel("Cotra_invoice.xlsx", header=0)
 
 # Drop empty/summary rows
@@ -17,7 +17,7 @@ df_raw["LS"] = df_raw["LS"].astype(int)
 leer_mask = (df_raw["WGR"].astype(str).str.strip().str.upper() == "LEER") & (df_raw["BEZEICHNUNG"] == "Standard")
 df_raw.loc[leer_mask, "BEZEICHNUNG"] = "Leerfahrt"
 
-# ── Load DB ───────────────────────────────────────────────────────────────────
+# Load DB Metabase
 ca3_url = os.getenv("CA3_URL_Excel")
 rrm_url = os.getenv("RRM_URL_Excel")
 
@@ -32,7 +32,7 @@ if not ca3_url or not rrm_url:
 db_ca3 = pd.read_json(ca3_url)
 db_rrm = pd.read_json(rrm_url)
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# Helpers
 def norm(v):
     if pd.isna(v):
         return ""
@@ -146,7 +146,7 @@ def get_invoiceshort(vin, von_str, nach_str):
     val = candidates.iloc[0]["invoice"]
     return "" if pd.isna(val) else str(val).strip()
 
-# ── Build one row per Standard line (= one transport) ────────────────────────
+# Build one row per Standard line (= one transport)
 def get_nebenkosten(group):
     extra = group[~group["BEZEICHNUNG"].isin(["Standard", "Treibstoffzuschlag"])]["BEZEICHNUNG"]
     return list(extra.dropna().unique())
@@ -190,7 +190,7 @@ for ls_id, grp in df_raw.groupby("LS"):
 new_df = pd.DataFrame(records)
 print(f"Transporte gesamt (Standard-Zeilen): {len(new_df)}")
 
-# ── Build full comparison table ───────────────────────────────────────────────
+# Build full comparison table
 compare_results = []
 
 for _, row in new_df.iterrows():
@@ -255,14 +255,14 @@ for _, row in new_df.iterrows():
 
 df_vergleich = pd.DataFrame(compare_results)
 
-# ── STEP 1: Anzahl TA ─────────────────────────────────────────────────────────
+# STEP 1: Anzahl TA
 ca3_count    = df_vergleich[(df_vergleich["Auftraggeber"] == "CA3") & (df_vergleich["AuftraggeberVergleich"] == "OK")].shape[0]
 rrm_count    = df_vergleich[(df_vergleich["Auftraggeber"] == "RRM") & (df_vergleich["AuftraggeberVergleich"] == "OK")].shape[0]
 fehler_count = df_vergleich[df_vergleich["AuftraggeberVergleich"] == "NOK"].shape[0]
 
 step1_df = pd.DataFrame({"CA3": [ca3_count], "RRM": [rrm_count], "Fehler": [fehler_count]})
 
-# ── STEP 1_1 / 1_2 / 1_3 ─────────────────────────────────────────────────────
+# STEP 1_1 / 1_2 / 1_3
 # LS and Invoiceshort always first two columns
 COLS_S1 = ["LS", "Invoiceshort", "VIN", "Model", "Faktor", "Total",
            "Loadingcity", "Delivercity", "Auftraggeber", "AuftraggeberVergleich"]
@@ -279,7 +279,7 @@ step_1_3_df = df_vergleich[
     (df_vergleich["Auftraggeber"] == "RRM") & (df_vergleich["AuftraggeberVergleich"] == "OK")
 ][COLS_S1].copy()
 
-# ── STEP 1_4: Zusätzlich ──────────────────────────────────────────────────────
+# STEP 1_4: Zusätzlich
 COLS_S14 = [
     "LS", "Invoiceshort", "Auftraggeber", "VIN", "Model", "Faktor", "Total",
     "Loadingcity", "Delivercity", "Loadingzipcode", "Deliverzipcode",
@@ -300,7 +300,7 @@ df_zusatz = df_vergleich[
     )
 ][COLS_S14].copy()
 
-# ── STEP 2: Falschbeträge ─────────────────────────────────────────────────────
+# STEP 2: Falschbeträge
 # Standard row POSITIONSBETRAG is always just 154 or 214 - Nebenkosten are separate rows
 VALID_BASE = {154, 214}
 
@@ -338,7 +338,7 @@ step2_df_errors = df_vergleich[
     df_vergleich["Betrag okey"].isin(["NOK", "Manuell prüfen", "NOK, Faktor prüfen"])
 ][COLS_S2].copy()
 
-# ── STEP 3: Nebenkosten Zusammenfassung ───────────────────────────────────────
+# STEP 3: Nebenkosten Zusammenfassung
 # Count directly from df_raw Nebenkosten lines (not df_vergleich which may have duplicates)
 df_neben_raw = df_raw[~df_raw["BEZEICHNUNG"].isin(["Standard", "Treibstoffzuschlag"])]
 
@@ -363,7 +363,7 @@ summary_nebenkosten = pd.DataFrame({
     ]
 })
 
-# ── STEP 4: Weiterverrechnet ──────────────────────────────────────────────────
+# STEP 4: Weiterverrechnet
 # One row per Nebenkosten line (BEZEICHNUNG != Standard/Treibstoffzuschlag)
 df_raw_neben = df_raw[~df_raw["BEZEICHNUNG"].isin(["Standard", "Treibstoffzuschlag"])].copy()
 
@@ -432,7 +432,7 @@ for idx, row in step_4_neben.iterrows():
 
     step_4_neben.at[idx, "Weiterverrechnet"] = wv
 
-# ── STEP 5: PW / SUV / LNF ───────────────────────────────────────────────────
+# STEP 5: PW / SUV / LNF
 pw_count    = len(df_vergleich[df_vergleich["Faktor"] <= 1.0])
 lnf_count   = len(df_vergleich[df_vergleich["Faktor"] >= 2.0])
 suv_count   = len(df_vergleich[(df_vergleich["Faktor"] > 1.0) & (df_vergleich["Faktor"] < 2.0)])
@@ -447,7 +447,7 @@ df_5 = pd.DataFrame({
     "Check": ["OK" if total_count == step1_total else "NOK"]
 })
 
-# ── STEP 6: Dublikate ─────────────────────────────────────────────────────────
+# STEP 6: Dublikate
 # A real duplicate = same VIN (KREF) + same VON + same NACH + same BEZEICHNUNG
 # across different LS entries (not just Nebenkosten rows of the same transport)
 # Duplicates: same VIN + VON + NACH + BEZEICHNUNG across all df_raw rows
@@ -468,7 +468,7 @@ else:
     df_duplicates = pd.DataFrame({"Meldung": ["Keine Doppeleinträge gefunden"]})
     print("Keine Doppeleinträge gefunden")
 
-# ── STEP 7: Gesamtbetrag ──────────────────────────────────────────────────────
+# STEP 7: Gesamtbetrag
 kalk_sum = round(df_raw["POSITIONSBETRAG"].sum(), 2)
 
 df_7 = pd.DataFrame({
@@ -478,7 +478,7 @@ df_7 = pd.DataFrame({
     "Stimmt der Gesamtbetrag":      ["Manuell prüfen – kein Gesamtbetrag in Datei"]
 })
 
-# ── STEP 8: Komische Transporte ───────────────────────────────────────────────
+# STEP 8: Komische Transporte
 mask_von  = df_vergleich["VON"].str.lower().str.contains("cotra", na=False)
 mask_nach = df_vergleich["NACH"].str.lower().str.contains("cotra", na=False)
 
@@ -490,7 +490,7 @@ if (mask_von & mask_nach).any():
 else:
     df_8 = pd.DataFrame({"Meldung": ['Keine "komischen" Transporte gefunden']})
 
-# ── Write output ──────────────────────────────────────────────────────────────
+# Write output
 def write_sheet(writer, df_sheet, sheet_name, col_width=25):
     df_sheet.to_excel(writer, sheet_name=sheet_name, index=False)
     ws = writer.sheets[sheet_name]
