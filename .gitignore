@@ -2,3 +2,5 @@ config.json
 .cursor/
 Fehlerreport.xlsx
 .continue
+.aider*
+.aider.tags.cache.v4/

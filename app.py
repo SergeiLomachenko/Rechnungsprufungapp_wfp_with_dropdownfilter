@@ -46,6 +46,9 @@ def index():
         if rechnungstyp == "pdf4" and file_ext != ".pdf":
             flash("Bitte laden Sie eine PDF-Datei für 'Hauptrechnung Galliker pdf' hoch.")
             return redirect(request.url)
+        if rechnungstyp == "pdf2" and file_ext not in [".xlsx", ".xls"]:
+            flash("Bitte laden Sie eine Excel-Datei für 'Hauptrechnung Cotra' hoch.")
+            return redirect(request.url)
         if rechnungstyp == "pdf5" and file_ext not in [".xlsx", ".xls"]:
             flash("Bitte laden Sie eine Excel-Datei für 'Schild und Ausweise Excel' hoch.")
             return redirect(request.url)
@@ -179,6 +182,18 @@ def index():
                 path = os.path.join(BASE_DIR, f)
                 if os.path.exists(path):
                     os.remove(path)
+
+        elif rechnungstyp == "pdf2":
+            target_excel = os.path.join(BASE_DIR, 'Cotra_invoice.xlsx')
+            os.replace(temp_path, target_excel)
+
+            run_analysis(
+                script_name="pdf2.py",
+                rename_map={
+                    'file4.xlsx': 'Fehlerreport.xlsx'
+                }
+            )
+            result_files = ['Fehlerreport.xlsx']
 
         elif rechnungstyp == "pdf5":
             # Schild und Ausweise Excel flow
