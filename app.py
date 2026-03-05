@@ -55,6 +55,12 @@ def index():
         if rechnungstyp == "pdf6" and file_ext not in [".xlsx", ".xls"]:
             flash("Bitte laden Sie eine Excel-Datei für 'Service Leistungen' hoch.")
             return redirect(request.url)
+        if rechnungstyp == "pdf7" and file_ext not in [".xlsx", ".xls"]:
+            flash("Bitte laden Sie eine Excel-Datei für 'Service Leistungen Batterie' hoch.")
+            return redirect(request.url)
+        if rechnungstyp == "pdf8" and file_ext not in [".xlsx", ".xls"]:
+            flash("Bitte laden Sie eine Excel-Datei für 'Service Leistungen HV' hoch.")
+            return redirect(request.url)
         
         # Saving to temporary with unique name
         temp_name = f"invoice_{uuid.uuid4().hex}.pdf"
@@ -235,6 +241,49 @@ def index():
             # cleanup uploaded excel if needed
             if os.path.exists(target_excel):
                 os.remove(target_excel)
+        
+        elif rechnungstyp == "pdf7":
+            target_excel = os.path.join(BASE_DIR, 'Batterie_invoice.xlsx')
+            os.replace(temp_path, target_excel)
+
+            run_analysis(
+                script_name="pdf7.py",
+                env_updates={
+                    "INPUT_EXCEL_PATH": target_excel,
+                    "BASE_DIR": BASE_DIR,
+                    "CA3_Batterie": os.getenv("CA3_Batterie", ""),
+                    "RRM_Batterie": os.getenv("RRM_Batterie", "")
+                }
+            )
+            result_files = ['Fehlerreport.xlsx']
+
+            if os.path.exists(target_excel):
+                try:
+                    os.remove(target_excel)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not delete {target_excel}: {e}")
+
+        elif rechnungstyp == "pdf8":
+            target_excel = os.path.join(BASE_DIR, 'HV_invoice.xlsx')
+            os.replace(temp_path, target_excel)
+
+            run_analysis(
+                script_name="pdf8.py",
+                env_updates={
+                    "INPUT_EXCEL_PATH": target_excel,
+                    "BASE_DIR": BASE_DIR,
+                    "CA3_Batterie": os.getenv("CA3_Batterie", ""),
+                    "RRM_Batterie": os.getenv("RRM_Batterie", "")
+                }
+            )
+            result_files = ['Fehlerreport.xlsx']
+
+            if os.path.exists(target_excel):
+                try:
+                    os.remove(target_excel)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not delete {target_excel}: {e}")
+
         elif rechnungstyp == "pdf6":
             # Service Leistungen Excel flow
             # Remove old Fehlerreport.xlsx to avoid caching when no errors are found
