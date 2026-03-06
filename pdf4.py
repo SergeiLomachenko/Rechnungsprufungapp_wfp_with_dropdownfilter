@@ -46,13 +46,17 @@ for page_text in pages[1:]:  # Analyse von Seiten, gestartet mit der zweiten
     
     for i, line in enumerate(lines):
         # Raw mit Fahrzeugsinfo festlegen, entsprechend den Ziffern
-        if any(keyword in line for keyword in ["BM", "VW", "DC", "FI", "NI", "ME", "VF", "VX", "GF", "PS", "EF", "TX", "AR", "RN", "WBA", "TMB", "VSS", "EU", "XX", "DA", "FO"]):
+        if any(keyword in line for keyword in ["BM", "VW", "DC", "FI", "NI", "ME", "VF", "VX", "GF", "PS", "EF", "TX", "AR", "RN", "WBA", "TMB", "VSS", "EU", "XX", "DA", "FO", "HY", "PO", "MA", "W0L", "W0V", "W1K", "W1N", "W1V", "WDD", "WDC", "WDB", "WDF",
+                                       "WME", "WMW", "WP0", "WP1", "WUA", "WVG", "WVW", "WV1", "WV2", "WV3",
+                                       "YV1", "YSM", "ZFA", "ZN6", "ZAR", "LPS", "LRW", "5YJ", "SB1", "JF1",
+                                       "JMB", "JTD", "JMZ", "KMH", "KMT", "KNA", "UU1", "VF1", "VF3", 
+                                       "VF7","VR3","SAL","TMA","1C4","WBAC","WBAT","WBS","WBY"]):
             line_parts = line.split()
             if len(line_parts) < 5:
                 continue  # When the raw is too short
 
             ziffer = line_parts[0]
-            if ziffer.strip() not in ["BM", "VW", "DC", "FI", "NI", "ME", "VF", "VX", "GF", "PS", "EF", "TX", "AR", "RN", "WBA", "TMB", "VSS", "EU", "XX", "DA", "FO"]:
+            if ziffer.strip() not in ["BM", "VW", "DC", "FI", "NI", "ME", "VF", "VX", "GF", "PS", "EF", "TX", "AR", "RN", "WBA", "TMB", "VSS", "EU", "XX", "DA", "FO", "HY", "PO", "MA", "W0L", "W0V", "W1K", "W1N", "W1V", "WDD", "WDC", "WDB", "WDF",]:
                 continue
 
             ziffer = line_parts[0]

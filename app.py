@@ -130,18 +130,19 @@ def index():
 
             # We call the analysis function, which will do the pdf4.py script and process the files
             run_analysis(
-                script_name="pdf4.py",
-                rename_map={
-                    'file1.xlsx': 'Gesamtinvoiceinfo.xlsx',
-                    'file2.xlsx': 'Invoiceinfo.xlsx',
-                    'file3.xlsx': 'Rechnungsprüfung.xlsx',
-                    'file4.xlsx': 'Fehlerreport.xlsx'
-                }
+                script_name="pdf11.py",
+                # rename_map={
+                #     'file1.xlsx': 'Gesamtinvoiceinfo.xlsx',
+                #     'file2.xlsx': 'Invoiceinfo.xlsx',
+                #     'file3.xlsx': 'Rechnungsprüfung.xlsx',
+                #     'file4.xlsx': 'Fehlerreport.xlsx'
+                # }
+                rename_map={'file4.xlsx': 'Fehlerreport.xlsx'}
             )
             result_files = [
-                'Gesamtinvoiceinfo.xlsx', 
-                'Invoiceinfo.xlsx', 
-                'Rechnungsprüfung.xlsx', 
+                # 'Gesamtinvoiceinfo.xlsx', 
+                # 'Invoiceinfo.xlsx', 
+                # 'Rechnungsprüfung.xlsx', 
                 'Fehlerreport.xlsx'
             ]
             
