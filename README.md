@@ -40,6 +40,10 @@ Techstack: python(flask pandas requests httpx sys re pdfplumber  pdopenpyxl uuid
 | `pdf4.py` | Galliker — Hauptrechnung (PDF) |
 | `pdf5.py` | Galliker — Schild und Ausweise (Excel) |
 | `pdf6.py` | Galliker — Service Leistungen (Excel) |
+| `pdf7.py` | Galliker — Batterie (Excel) |
+| `pdf8.py` | Galliker — HV Batterie (Excel) |
+| `pdf9.py` | Galliker — eÜbernahme (Excel) |
+| `pdf10.py` | Galliker — LagerßHandling (Excel) |
 
 ---
 
