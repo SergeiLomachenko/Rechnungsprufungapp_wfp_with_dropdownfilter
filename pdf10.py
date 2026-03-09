@@ -85,20 +85,26 @@ dup_vins = set(new_df[new_df.duplicated(subset=["VIN"], keep=False)]["VIN"])
 
 # ── Merge by VIN, use Order-Nr as tiebreaker if available ────────────────────
 def get_best_db_row(vin, order_nr):
-    candidates = df_metabase[df_metabase["vin"] == vin]
-    if candidates.empty:
+    try:
+        candidates = df_metabase[df_metabase["vin"] == vin]
+        if candidates.empty:
+            return None
+        if order_nr and str(order_nr).strip():
+            match = candidates[candidates["invoice_str"] == str(order_nr).strip()]
+            if not match.empty:
+                row = match.iloc[0]
+                return row if isinstance(row, pd.Series) else None
+        return candidates.sort_values("invoice", ascending=False).iloc[0]
+    except Exception as e:
+        print(f"⚠️ Error: {e}")
         return None
-    # If Order-Nr present, try to match invoice
-    if order_nr and str(order_nr).strip():
-        match = candidates[candidates["invoice_str"] == str(order_nr).strip()]
-        if not match.empty:
-            return match.iloc[0]
-    # Fallback: highest invoice value
-    return candidates.sort_values("invoice", ascending=False).iloc[0]
 
 db_rows = new_df.apply(
     lambda row: get_best_db_row(row["VIN"], row["OrderNr"]), axis=1
 )
+
+db_rows = [r if (isinstance(r, pd.Series) or r is None) else None for r in db_rows]
+
 db_df = pd.DataFrame([r.to_dict() if r is not None else {} for r in db_rows])
 
 # Ensure required DB columns exist even when no matches found
