@@ -149,16 +149,16 @@ dup_vins = set(new_df[new_df.duplicated(subset=["VIN"], keep=False)]["VIN"])
 def bemerkungen_logic(row):
     parts = []
     if row["VIN"] in dup_vins:
-        parts.append("Duplicate in file")
+        parts.append("Duplikate")
     
     # Report generation using merged and validated data
     if row["VIN_vergleich"] == "NOK":
-        parts.append("Transport order not found. Please check manually")
+        parts.append("Transportauftrag nicht gefunden. Bitte manuell prüfen")
     else:
         if row["WFP4500_vergleich"] == "NOK":
-            parts.append("WFP 4500 not activated")
+            parts.append("WFP 4500 nicht aktiviert")
         else:
-            parts.append("OK, processed")
+            parts.append("OK, weiterverrechnet")
     return " | ".join(parts)
 
 # Apply reporting logic vectorized across the merged DataFrame
