@@ -69,13 +69,20 @@ def index():
             return redirect(request.url)
         
         # Saving to temporary with unique name
-        temp_name = f"invoice_{uuid.uuid4().hex}.pdf"
+        # temp_name = f"invoice_{uuid.uuid4().hex}.pdf"
+        temp_name = f"invoice_{uuid.uuid4().hex}{file_ext}"
         temp_path = os.path.join(BASE_DIR, temp_name)
         invoice_file.save(temp_path)
 
         result_files = []
 
         if rechnungstyp == "pdf4":
+            old_report = os.path.join(BASE_DIR, 'Fehlerreport.xlsx')
+            if os.path.exists(old_report):
+                try:
+                    os.remove(old_report)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not remove old Fehlerreport.xlsx: {e}")
             # Rerighting into invoice.pdf, which will be analysed by pdf4.py, saving to BASE_DIR
             invoice_path = os.path.join(BASE_DIR, 'invoice.pdf')
             if os.path.exists(invoice_path):
@@ -154,6 +161,12 @@ def index():
         
         
         elif rechnungstyp == "pdf3":
+            old_report = os.path.join(BASE_DIR, 'Fehlerreport.xlsx')
+            if os.path.exists(old_report):
+                try:
+                    os.remove(old_report)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not remove old Fehlerreport.xlsx: {e}")
             # Rerighting into invoice.pdf, which will be analysed by pdf4.py, saving to BASE_DIR
             invoice_path = os.path.join(BASE_DIR, 'invoice.xlsx')
             if os.path.exists(invoice_path):
@@ -197,6 +210,12 @@ def index():
                     os.remove(path)
 
         elif rechnungstyp == "pdf2":
+            old_report = os.path.join(BASE_DIR, 'Fehlerreport.xlsx')
+            if os.path.exists(old_report):
+                try:
+                    os.remove(old_report)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not remove old Fehlerreport.xlsx: {e}")
             target_excel = os.path.join(BASE_DIR, 'Cotra_invoice.xlsx')
             os.replace(temp_path, target_excel)
 
@@ -209,12 +228,17 @@ def index():
             result_files = ['Fehlerreport.xlsx']
 
         elif rechnungstyp == "pdf5":
+            old_report = os.path.join(BASE_DIR, 'Fehlerreport.xlsx')
+            if os.path.exists(old_report):
+                try:
+                    os.remove(old_report)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not remove old Fehlerreport.xlsx: {e}")
             # Schild und Ausweise Excel flow
             target_excel = os.path.join(BASE_DIR, 'Ausweise_Schilder.xlsx')
             if os.path.exists(target_excel):
                 os.remove(target_excel)
             os.replace(temp_path, target_excel)
-
 
             # env
             PDF5_URL = os.getenv("ca3_ausweise_schilder") 
@@ -250,6 +274,12 @@ def index():
                 os.remove(target_excel)
         
         elif rechnungstyp == "pdf7":
+            old_report = os.path.join(BASE_DIR, 'Fehlerreport.xlsx')
+            if os.path.exists(old_report):
+                try:
+                    os.remove(old_report)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not remove old Fehlerreport.xlsx: {e}")
             target_excel = os.path.join(BASE_DIR, 'Batterie_invoice.xlsx')
             os.replace(temp_path, target_excel)
 
@@ -271,6 +301,12 @@ def index():
                     print(f"Could not delete {target_excel}: {e}")
 
         elif rechnungstyp == "pdf8":
+            old_report = os.path.join(BASE_DIR, 'Fehlerreport.xlsx')
+            if os.path.exists(old_report):
+                try:
+                    os.remove(old_report)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not remove old Fehlerreport.xlsx: {e}")
             target_excel = os.path.join(BASE_DIR, 'HV_invoice.xlsx')
             os.replace(temp_path, target_excel)
 
@@ -292,9 +328,15 @@ def index():
                     print(f"Could not delete {target_excel}: {e}")
 
         elif rechnungstyp == "pdf9":
-            target_excel = os.path.join(BASE_DIR, 'eUebernahme_invoice.xlsx')
-            os.replace(temp_path, target_excel)
+            old_report = os.path.join(BASE_DIR, 'Fehlerreport.xlsx')
+            if os.path.exists(old_report):
+                try:
+                    os.remove(old_report)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not remove old Fehlerreport.xlsx: {e}")
 
+            target_excel = os.path.join(BASE_DIR, 'eUebernahme_invoice.xlsx')
+            os.replace(temp_path, target_excel) 
             run_analysis(
                 script_name="pdf9.py",
                 env_updates={
@@ -313,6 +355,12 @@ def index():
                     print(f"Could not delete {target_excel}: {e}")
 
         elif rechnungstyp == "pdf10":
+            old_report = os.path.join(BASE_DIR, 'Fehlerreport.xlsx')
+            if os.path.exists(old_report):
+                try:
+                    os.remove(old_report)
+                except (PermissionError, OSError) as e:
+                    print(f"Could not remove old Fehlerreport.xlsx: {e}")
             target_excel = os.path.join(BASE_DIR, 'Lager_invoice.xlsx')
             os.replace(temp_path, target_excel)
 
@@ -446,7 +494,6 @@ def run_analysis(script_name="pdf4.py", rename_map=None, env_updates=None):
         else:
             print(f"Ausgabedatei {original} wurde nicht gefunden.")
 
-
 @app.route("/downloads")
 def download_page():
     files_param = request.args.get("files", "")
@@ -461,7 +508,6 @@ def download_page():
     # List of the files for downloading
     return render_template("download.html", results=results)
 
-
 @app.route("/download/<filename>")
 def download_file(filename):
     file_path = os.path.join(BASE_DIR, filename)
@@ -469,7 +515,6 @@ def download_file(filename):
         return send_file(file_path, as_attachment=True)
     else:
         return "Datei nicht gefunden", 404
-
 
 if __name__ == '__main__':
     app.run(debug=True)
