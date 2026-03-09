@@ -55,6 +55,10 @@ if not ca3_url or not rrm_url:
 df_ca3 = pd.read_json(ca3_url)
 df_rrm = pd.read_json(rrm_url)
 
+# Normalisation: lowercase column names for easier handling
+df_ca3.columns = [col.lower() for col in df_ca3.columns]
+df_rrm.columns = [col.lower() for col in df_rrm.columns]
+
 df_ca3["Auftraggeber"] = "CA3"
 df_rrm["Auftraggeber"] = "RRM"
 df_metabase = pd.concat([df_ca3, df_rrm], ignore_index=True)
@@ -96,6 +100,12 @@ db_rows = new_df.apply(
     lambda row: get_best_db_row(row["VIN"], row["OrderNr"]), axis=1
 )
 db_df = pd.DataFrame([r.to_dict() if r is not None else {} for r in db_rows])
+
+# Ensure required DB columns exist even when no matches found
+for col in ["vin", "invoice", "Auftraggeber", "WFP4500"]:
+    if col not in db_df.columns:
+        db_df[col] = None
+
 merged_df = pd.concat([new_df.reset_index(drop=True), db_df.reset_index(drop=True)], axis=1)
 
 # ── Vergleich ─────────────────────────────────────────────────────────────────
